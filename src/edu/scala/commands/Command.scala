@@ -10,12 +10,14 @@ trait Command {
 
 object Command {
 
+  val CD = "cd"
   val LS = "ls"
   val MKDIR = "mkdir"
   val PWD = "pwd"
+  val TOUCH = "touch"
 
   def emptyCommand: Command =
-    (state) => state
+    (state) => state.setMessage("")
 
   def incompleteCommand(name: String): Command =
     (state) => state.setMessage(name + " incomplete command!")
@@ -27,7 +29,14 @@ object Command {
       if (tokens.length < 2) incompleteCommand(MKDIR)
       else new Mkdir(tokens(1))
     } else if (LS.equals(tokens(0))) new Ls
-    else new UnknownCommand
+    else if (PWD.equals(tokens(0))) new Pwd
+    else if (TOUCH.equals(tokens(0))) {
+      if (tokens.length < 2) incompleteCommand(TOUCH)
+      else new Touch(tokens(1))
+    } else if (CD.equals(tokens(0))) {
+      if (tokens.length < 2) incompleteCommand(CD)
+      else new Cd(tokens(1))
+    } else new UnknownCommand
   }
 
 }
